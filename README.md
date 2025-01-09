@@ -83,6 +83,16 @@ Once finished, specify the path to `evaluator.py` when you run promptimal:
 
 This file will effectively serve as a script that promptimal uses to evaluate prompts.
 
+### Custom OpenAI Base URL and Model Name
+
+You can also specify a custom OpenAI base URL and model name using the following command-line arguments:
+
+```bash
+> promptimal --openai_base_url="https://api.openai.com/v1" --openai_model_name="gpt-4"
+```
+
+This allows you to use different OpenAI endpoints and models as needed.
+
 ## Roadmap
 
 1. Support for other LLM providers, like Anthropic, Groq, etc. And ollama for local models.

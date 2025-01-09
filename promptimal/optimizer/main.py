@@ -35,9 +35,11 @@ async def optimize(
     threshold: float = 1.0,
     api_key: str = "",
     evaluator: Optional[callable] = None,
+    base_url: Optional[str] = None,  # Custom OpenAI base URL
+    model_name: Optional[str] = "gpt-4o",  # Custom OpenAI model name
 ):
     evaluate = evaluate_fitness if not evaluator else evaluator
-    openai = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY", api_key))
+    openai = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY", api_key), base_url=base_url)
     start_time = time.time()
 
     best_candidate = initial_prompt = PromptCandidate(prompt)
@@ -53,7 +55,7 @@ async def optimize(
     )
 
     population, _token_count = await init_population(
-        prompt, improvement_request, population_size, openai
+        prompt, improvement_request, population_size, openai, model_name
     )
     token_count += _token_count
     num_prompts = 0
@@ -68,7 +70,7 @@ async def optimize(
     )
 
     tasks = [
-        evaluate(candidate, improvement_request, initial_prompt, openai)
+        evaluate(candidate, improvement_request, initial_prompt, openai, model_name)
         for candidate in population
     ]
     for index, task in enumerate(asyncio.as_completed(tasks)):
@@ -107,7 +109,7 @@ async def optimize(
 
         # Evaluate fitness of each candidate
         tasks = [
-            evaluate(candidate, initial_prompt, improvement_request, openai)
+            evaluate(candidate, initial_prompt, improvement_request, openai, model_name)
             for candidate in population
         ]
         for i, task in enumerate(asyncio.as_completed(tasks)):
@@ -163,6 +165,7 @@ async def optimize(
                 initial_prompt=prompt,
                 improvement_request=improvement_request,
                 openai=openai,
+                model_name=model_name,
             )
             for parents in mates
         ]

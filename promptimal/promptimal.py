@@ -98,6 +98,20 @@ def main():
         type=str,
         help="Path to your custom evaluator script.",
     )
+    parser.add_argument(
+        "--openai_base_url",
+        default="",
+        required=False,
+        type=str,
+        help="Custom OpenAI base URL.",
+    )
+    parser.add_argument(
+        "--openai_model_name",
+        default="gpt-4o",
+        required=False,
+        type=str,
+        help="Custom OpenAI model name.",
+    )
     args = parser.parse_args()
 
     if not os.getenv("OPENAI_API_KEY", None) or args.openai_api_key:
@@ -123,6 +137,8 @@ def main():
         threshold=args.threshold,
         api_key=args.openai_api_key,
         evaluator=generate_evaluator(args.evaluator),
+        base_url=args.openai_base_url,
+        model_name=args.openai_model_name,
     )
 
     if args.prompt:
