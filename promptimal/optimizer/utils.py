@@ -26,7 +26,7 @@ except ImportError:
 
 
 async def init_population(
-    prompt: str, improvement_request: str, population_size: int, openai: AsyncOpenAI
+    prompt: str, improvement_request: str, population_size: int, openai: AsyncOpenAI, model_name: str
 ) -> Tuple[List[PromptCandidate], TokenCount]:
     """
     Initializes a population of candidate prompts.
@@ -44,7 +44,7 @@ async def init_population(
     }
     response = await openai.chat.completions.create(
         messages=[system_message, user_message],
-        model="gpt-4o",
+        model=model_name,
         temperature=1.0,
         response_format={
             "type": "json_schema",
@@ -83,6 +83,7 @@ async def evaluate_fitness(
     initial_prompt: PromptCandidate,
     improvement_request: str,
     openai: AsyncOpenAI,
+    model_name: str,
     num_samples=5,
 ) -> Tuple[PromptCandidate, TokenCount]:
     """
@@ -118,7 +119,7 @@ async def evaluate_fitness(
                 "content": f"Evaluate the following prompt:\n\n<prompt>\n{candidate.prompt}\n</prompt>",
             },
         ],
-        model="gpt-4o",
+        model=model_name,
         temperature=1.0,
         response_format={
             "type": "json_schema",
@@ -169,6 +170,7 @@ async def crossover(
     initial_prompt: str,
     improvement_request: str,
     openai: AsyncOpenAI,
+    model_name: str,
 ) -> Tuple[PromptCandidate, TokenCount]:
     system_message = {
         "role": "system",
@@ -182,7 +184,7 @@ async def crossover(
     }
     response = await openai.chat.completions.create(
         messages=[system_message, user_message],
-        model="gpt-4o",
+        model=model_name,
         temperature=1.0,
         response_format={
             "type": "json_schema",
